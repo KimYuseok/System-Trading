@@ -18,12 +18,13 @@ class DataAnalysis:
     def __init__(self):
         self.kiwoom = Kiwoom.Kiwoom()
         self.kiwoom.comm_connect()
-    def fundamental_analysis(self, df):
-        print("각 칼럼의 최댓값 :\n" , df.max())
-        print("각 칼럼의 최솟값 :\n",  df.min())
-        print("각 칼럼의 평균값 :\n", df.mean())
-        print("각 칼럼의 표준편차 :\n",df.std() )
-
+        
+    #해당 주가의 종가를 가지고 변동성 추이를 그린다.
+    def draw_volatility(self, df):
+        df['Log_Ret'] = np.log(df['Close'] / df['Close'].shift(1))
+        df["Volatility"] = df['Log_Ret'].rolling(window=252, center=False).std() * np.sqrt(252)
+        df[['Close', 'Volatility']].plot(subplots=True, color='blue', figsize=(8, 6))
+        plt.show()
 
     # 함수 인자로 조회할 종목코드와 시작날짜를 넘겨준다.
     def get_opt10081(self, code, start):
@@ -55,11 +56,6 @@ class DataAnalysis:
         print(df)
         return df
 
-    def merge_dataframe(self, df1, df2):
-        temp={"df1_close" :df1['close'], "df1_volume" : df1['volume'],
-                "df2_close" :df2['close'], "df2_volume" : df2['volume'] }
-        result= pd.DataFrame(temp, columns=["df1_close","df1_volume","df2_close","df2_volume"], index=df1.index)
-        return result
 
     def linearegression(self, x_var, y_var):
         #훈련 데이터와 테스트 데이터를 9:1 비율로 나눈다.
@@ -130,27 +126,15 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     dataAnalysis = DataAnalysis()
 
-
-
     #유가증권 시장에 상장된 종목코드를 뽑아온다.
     #code_list = dataAnalysis.kiwoom.get_code_list_by_market(MARKET_KOSPI)
-    #print(code_list)
+
     #키움증권 2017년 10월 13일까지 조회
     kiwoom_df= dataAnalysis.get_opt10081("078930","20171013")
     print(kiwoom_df)
     # GS 2017년 3월 21일 부터 조회
     #gs_df = dataAnalysis.get_opt10081("078930","20171013")
 
-    # 자료형을 dataframe의 index에서 datetime으로 바꾸어준다.
-    # dateIndex = pd.to_datetime(gs_df.index, format='%Y%m%d')
-
-    #기본적 분석
-    #dataAnalysis.fundamental_analysis(kiwoom_df)
-    #dataAnalysis.read_CSVfile('C:/Users/user/Desktop/code_list.txt')
-
     #GS의 기초 재무 비율을 크롤링을 통해서 가져온다.
     dataAnalysis.get_basic_finance("078930")
-
-    # 두 DataFrame 합치기
-    # print(dataAnalysis.merge_dataframe(kiwoom_df,gs_df))
 
