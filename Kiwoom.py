@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QAxContainer import *
 from PyQt5.QtCore import *
 
-# TR(Transaction) -> 서버로부터 데이터를 주고받는 행위
 # 키움증권 api 메소드를 사용하기 위해 dynamicCall를 사용해야한다.
 
 class Kiwoom(QAxWidget):

@@ -7,8 +7,6 @@ from bs4 import BeautifulSoup
 EPS: EPS, BPS: BPS , 주당배당금: bookValuePerShare, 시가배당률: DividendRatio,  배당성향: propensityToDividend
 '''
 
-#지금 이거 너무 느려서 한번 가져온 데이터는 DB에 저장해야함
-#그리고 반드시 크롤링했던 종목인지 사전에 체크하고 안한 것만 이 메소드 사용해야함.
 def get_basic_finance(code):
     html = urlopen("http://finance.naver.com/item/main.nhn?code=" + code)
     bsObj = BeautifulSoup(html, "html.parser")
